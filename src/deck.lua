@@ -10,37 +10,51 @@ local shuffle = function(table_input)
 end
 
 -- Create Deck
-deck = {}
-deck.stack = {}
-for suit_i, suit in pairs({"Hearts", "Diamonds", "Clubs", "Spades"}) do
-    for rank = 2,14 do
-        stack_i = (((suit_i - 1) * 13) + (rank - 1));
-        deck.stack[stack_i] = {rank=rank, suit=suit}
+Deck = {}
+
+Deck.new = function(self)
+    -- Create instance of Deck
+    o = {stack = {}}
+    self.__index = self
+    setmetatable(o, self)
+    
+    -- Add cards to stack
+    for suit_i, suit in pairs({"Hearts", "Diamonds", "Clubs", "Spades"}) do
+        for rank = 2,14 do
+            local stack_i = (((suit_i - 1) * 13) + (rank - 1));
+            o.stack[stack_i] = {rank=rank, suit=suit}
+        end
     end
+
+    -- initialize deck
+    o:init()
+   
+    -- Return object 
+    return o 
 end
 
--- Deck init function
-deck.init = function()
-    shuffle(deck.stack)
-    deck.stack_index = 52
+-- Init stack
+Deck.init = function(self)
+    shuffle(self.stack)
+    self.stack_index = 52
 end
 
 -- Stack pop operation
-deck.pop = function()
-    local card = deck.stack[deck.stack_index]
-    deck.stack_index = deck.stack_index - 1
+Deck.pop = function(self)
+    local card = self.stack[self.stack_index]
+    self.stack_index = self.stack_index - 1
     return card
 end
 
 -- Stack isEmpty operation
-deck.isEmpty = function()
-    return deck.stack_index <= 0
+Deck.isEmpty = function(self)
+    return self.stack_index <= 0
 end
 
 -- Stack size operation
-deck.size = function()
-    return deck.stack_index
+Deck.size = function(self)
+    return self.stack_index
 end
 
-return deck
+return Deck
 
